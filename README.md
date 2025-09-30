@@ -110,7 +110,7 @@ web-panenkita/
 ---
 
 <div align="center">
-  <b>© 2025 PanenKita. All Rights Reserved./b>
+  <b>© 2025 PanenKita. All Rights Reserved.
 </div>
  Vite
 
