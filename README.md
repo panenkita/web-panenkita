@@ -5,12 +5,6 @@
   <h1 align="center">PanenKita</h1>
   <p align="center">
     <b>Website Resmi PanenKita - Menghubungkan Petani dengan Pasar yang Lebih Luas.</b>
-    <br />
-    <a href="#fitur-utama">Fitur Utama</a> •
-    <a href="#teknologi-yang-digunakan">Teknologi</a> •
-    <a href="#mulai">Mulai</a> •
-    <a href="#struktur-proyek">Struktur Proyek</a> •
-    <a href="#kontribusi">Kontribusi</a>
   </p>
 </div>
 
@@ -91,7 +85,6 @@ Buka browser Anda dan kunjungi `http://localhost:5173` (atau port lain yang dita
 
 ```
 web-panenkita/
-├── public/
 ├── src/
 │   ├── assets/         # Gambar, logo, dan aset statis lainnya
 │   ├── components/     # Komponen React yang dapat digunakan kembali (Header, Footer)
@@ -114,14 +107,10 @@ web-panenkita/
   <p><i>Tampilan Halaman Beranda PanenKita</i></p>
 </div>
 
-## 🤝 Kontribusi
-
-Kami sangat terbuka untuk kontribusi dari komunitas. Jika Anda ingin berkontribusi, silakan lakukan _fork_ pada repositori ini dan buat _pull request_. Untuk perubahan besar, mohon buka _issue_ terlebih dahulu untuk mendiskusikan apa yang ingin Anda ubah.
-
 ---
 
 <div align="center">
-  <b>© 2024 PanenKita - Majukan Pertanian Indonesia!</b>
+  <b>© 2025 PanenKita. All Rights Reserved./b>
 </div>
  Vite
 
