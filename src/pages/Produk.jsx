@@ -1,6 +1,9 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
+// Data API
+import { fetchAllProducts } from '../data/api';
+
 // Icons
 import {
   FaSearch,
@@ -9,10 +12,8 @@ import {
   FaChevronLeft,
   FaChevronRight,
   FaUser,
+  FaExclamationCircle,
 } from 'react-icons/fa';
-
-// Data Dummy
-import { products } from '../data/dummyData';
 
 const ITEMS_PER_PAGE = 20;
 
@@ -22,6 +23,10 @@ const ITEMS_PER_PAGE = 20;
 const ProductCard = ({ product }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollContainerRef = useRef(null);
+  const [imageError, setImageError] = useState(false);
+
+  // Mengambil gambar dari array of objects { url: '...' }
+  const images = product.images.map((img) => img.url);
 
   const handleDotClick = (index) => {
     setCurrentIndex(index);
@@ -35,6 +40,14 @@ const ProductCard = ({ product }) => {
     }
   };
 
+  useEffect(() => {
+    setImageError(false);
+  }, [product.user.avatar]);
+
+  const handleImageError = () => {
+    setImageError(true);
+  };
+
   return (
     <div className="bg-cream/50 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 border border-dark-green/10 flex flex-col overflow-hidden">
       {/* Header */}
@@ -44,31 +57,30 @@ const ProductCard = ({ product }) => {
             {product.name}
           </h3>
           <span className="bg-light-green/20 text-dark-green px-2 py-1 text-xs font-semibold rounded-full border border-light-green/30 whitespace-nowrap">
-            {product.category}
+            {product.category.name}
           </span>
         </div>
       </div>
 
       {/* Image Gallery */}
       <div className="px-3 mb-3 relative">
-        {' '}
         <div
           ref={scrollContainerRef}
           className="flex overflow-x-hidden scroll-smooth rounded-xl"
         >
-          {product.images.map((image, index) => (
+          {images.map((image, index) => (
             <img
               key={index}
               src={image}
               alt={`${product.name} - ${index + 1}`}
-              className="w-full h-50 flex-shrink-0 aspect-square object-cover"
+              className="w-full h-50 flex-shrink-0 aspect-square object-cover bg-gray-200"
             />
           ))}
         </div>
-        {/* Butir */}
-        {product.images.length > 1 && (
+
+        {images.length > 1 && (
           <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2 rounded-full bg-black/30 p-1 backdrop-blur-sm">
-            {product.images.map((_, index) => (
+            {images.map((_, index) => (
               <button
                 key={index}
                 onClick={() => handleDotClick(index)}
@@ -86,19 +98,20 @@ const ProductCard = ({ product }) => {
       <div className="px-3 pb-3 flex flex-col flex-grow">
         <div className="text-xl font-extrabold text-teal-blue mb-2">
           <span className="font-semibold text-base">Rp </span>
-          {product.price}{' '}
+          {product.price.toLocaleString('id-ID')}{' '}
           <span className="text-xs font-normal text-dark-green/60">
-            /{product.unit}
+            /{product.priceUnit}
           </span>
         </div>
 
         <div className="mb-2">
           <div className="flex items-center gap-2">
-            {product.seller.image ? (
+            {product.user.avatar && !imageError ? (
               <img
-                src={product.seller.image}
-                alt={product.seller.name}
+                src={product.user.avatar}
+                alt={product.user.name}
                 className="w-8 h-8 rounded-full border border-light-green/30 object-cover"
+                onError={handleImageError}
               />
             ) : (
               <div className="w-8 h-8 bg-light-green/20 rounded-full flex items-center justify-center border border-light-green/30">
@@ -108,10 +121,12 @@ const ProductCard = ({ product }) => {
 
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-dark-green truncate">
-                {product.seller.name}
+                {product.user.name}
               </p>
+
+              {/* Lokasi tidak ada di API, bisa dihilangkan atau diberi nilai default */}
               <p className="text-xs text-dark-green/60 truncate">
-                {product.seller.location}
+                {product.user.whatsappNumber || 'Kontak tidak tersedia'}
               </p>
             </div>
           </div>
@@ -125,7 +140,7 @@ const ProductCard = ({ product }) => {
   );
 };
 
-// Komponen Toolbar (Search, Category, Sort)
+// Komponen Toolbar
 const Toolbar = ({
   searchTerm,
   setSearchTerm,
@@ -137,7 +152,6 @@ const Toolbar = ({
 }) => (
   <div className="pt-6 px-6 bg-white/80">
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-      {/* Search Bar (lebih lebar) */}
       <div className="relative md:col-span-2">
         <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
         <input
@@ -149,7 +163,6 @@ const Toolbar = ({
         />
       </div>
 
-      {/* Category Filter */}
       <div className="relative">
         <FaFilter className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
         <select
@@ -165,7 +178,6 @@ const Toolbar = ({
         </select>
       </div>
 
-      {/* Sort Dropdown */}
       <div className="relative">
         <FaSortAmountDown className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
         <select
@@ -231,41 +243,68 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 // --- KOMPONEN UTAMA ---
 
 const Produk = () => {
+  // State untuk data dan UI
+  const [allProducts, setAllProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Semua');
   const [sortBy, setSortBy] = useState('name');
   const [currentPage, setCurrentPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
 
-  // Memoize categories to prevent re-calculation on every render.
-  // Fungsi untuk menghitung daftar kategori
+  // State untuk loading dan error
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // --- EFEK UNTUK MENGAMBIL DATA ---
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        setIsLoading(true);
+        const productsData = await fetchAllProducts();
+        setAllProducts(productsData);
+      } catch (err) {
+        setError(err.message || 'Gagal memuat data produk.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadProducts();
+  }, []); // Dependency array kosong, hanya berjalan sekali saat mount
+
+  // --- MEMOIZE UNTUK PERFORMA ---
+
+  // Menghitung daftar kategori dari data API
   const categories = useMemo(
-    () => ['Semua', ...new Set(products.map((product) => product.category))],
-    []
+    () => [
+      'Semua',
+      ...new Set(allProducts.map((product) => product.category.name)),
+    ],
+    [allProducts] // Bergantung pada data produk yang sudah di-fetch
   );
 
-  // Memoize the filtered and sorted product list for performance.
-  // Fungsi untuk menghitung daftar produk
+  // Fungsi untuk filter dan sorting produk (client-side)
   const filteredProducts = useMemo(() => {
-    let tempProducts = products.filter((product) => {
+    let tempProducts = [...allProducts];
+
+    // 1. Filter berdasarkan Search Term dan Kategori
+    tempProducts = tempProducts.filter((product) => {
       const searchLower = searchTerm.toLowerCase();
       const matchesSearch =
         product.name.toLowerCase().includes(searchLower) ||
         product.description.toLowerCase().includes(searchLower);
       const matchesCategory =
-        selectedCategory === 'Semua' || product.category === selectedCategory;
+        selectedCategory === 'Semua' ||
+        product.category.name === selectedCategory;
       return matchesSearch && matchesCategory;
     });
 
+    // 2. Sorting
     tempProducts.sort((a, b) => {
       switch (sortBy) {
         case 'price':
-          return (
-            parseInt(a.price.replace(/[^0-9]/g, '')) -
-            parseInt(b.price.replace(/[^0-9]/g, ''))
-          );
+          return a.price - b.price;
         case 'category':
-          return a.category.localeCompare(b.category);
+          return a.category.name.localeCompare(b.category.name);
         case 'name':
         default:
           return a.name.localeCompare(b.name);
@@ -273,15 +312,15 @@ const Produk = () => {
     });
 
     return tempProducts;
-  }, [searchTerm, selectedCategory, sortBy]);
+  }, [allProducts, searchTerm, selectedCategory, sortBy]);
 
-  // Reset page to 1 when filters change.
+  // Reset halaman ke 1 jika filter berubah
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm, selectedCategory, sortBy]);
 
-  // Pagination calculations.
-  // Fungsi untuk menghitung total halaman
+  // --- KALKULASI PAGINASI ---
+
   const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
   const currentProducts = filteredProducts.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
@@ -289,15 +328,72 @@ const Produk = () => {
   );
 
   const handlePageChange = (newPage) => {
-    setIsLoading(true);
-    // Simulate loading delay for better UX
-    setTimeout(() => {
+    if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage);
-      setIsLoading(false);
       document
         .getElementById('products-section')
         ?.scrollIntoView({ behavior: 'smooth' });
-    }, 300);
+    }
+  };
+
+  // --- KONTEN UNTUK DIRENDER ---
+
+  const renderContent = () => {
+    // Tampilan saat loading
+    if (isLoading) {
+      return (
+        <div className="flex justify-center items-center py-20">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-blue"></div>
+        </div>
+      );
+    }
+
+    // Tampilan saat error
+    if (error) {
+      return (
+        <div className="text-center py-16">
+          <FaExclamationCircle
+            size={64}
+            className="mx-auto text-red-400 mb-6"
+          />
+          <h3 className="text-2xl font-bold text-dark-green mb-4">
+            Oops, Terjadi Kesalahan
+          </h3>
+          <p className="text-dark-green/70 max-w-md mx-auto">{error}</p>
+        </div>
+      );
+    }
+
+    // Tampilan jika produk tidak ditemukan setelah filter
+    if (currentProducts.length === 0) {
+      return (
+        <div className="text-center py-16">
+          <FaSearch size={64} className="mx-auto text-dark-green/40 mb-6" />
+          <h3 className="text-2xl font-bold text-dark-green mb-4">
+            Tidak ada produk ditemukan
+          </h3>
+          <p className="text-dark-green/70 max-w-md mx-auto">
+            Coba ubah kata kunci pencarian atau filter kategori Anda.
+          </p>
+        </div>
+      );
+    }
+
+    // Tampilan jika produk ada
+    return (
+      <>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
+          {currentProducts.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      </>
+    );
   };
 
   return (
@@ -333,7 +429,6 @@ const Produk = () => {
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-          {/* Toolbar */}
           <Toolbar
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
@@ -344,39 +439,8 @@ const Produk = () => {
             categories={categories}
           />
 
-          {/* Product Grid Section */}
           <div id="products-section" className="p-6">
-            {isLoading ? (
-              <div className="flex justify-center items-center py-20">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-blue"></div>
-              </div>
-            ) : currentProducts.length > 0 ? (
-              <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
-                  {currentProducts.map((product) => (
-                    <ProductCard key={product.id} product={product} />
-                  ))}
-                </div>
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={handlePageChange}
-                />
-              </>
-            ) : (
-              <div className="text-center py-16">
-                <FaSearch
-                  size={64}
-                  className="mx-auto text-dark-green/40 mb-6"
-                />
-                <h3 className="text-2xl font-bold text-dark-green mb-4">
-                  Tidak ada produk ditemukan
-                </h3>
-                <p className="text-dark-green/70 max-w-md mx-auto">
-                  Coba ubah kata kunci pencarian atau filter kategori Anda.
-                </p>
-              </div>
-            )}
+            {renderContent()}
           </div>
         </div>
       </div>

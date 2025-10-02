@@ -1,5 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+
+// Data API
+import { fetchAllPlantingPlans, fetchAllHarvestNeeds } from '../data/api';
 
 // Icons
 import {
@@ -10,81 +13,43 @@ import {
   FaFilter,
   FaSortAmountDown,
   FaUser,
+  FaExclamationCircle,
 } from 'react-icons/fa';
 import { LuWheat } from 'react-icons/lu';
 import { FaWheatAwn } from 'react-icons/fa6';
 
-// Data Dummy
-import { plantingPlans, harvestNeeds } from '../data/dummyData';
-
 // --- KONSTANTA & FUNGSI BANTUAN ---
 
-// Jumlah item
 const ITEMS_PER_PAGE = 20;
 
-// Peta Kategori Tanaman berdasarkan nama produk
-const CROP_CATEGORY_MAP = {
-  'Biji-bijian': ['padi', 'jagung', 'beras'],
-  Rempah: [
-    'cabai',
-    'bawang',
-    'kemangi',
-    'daun',
-    'seledri',
-    'peterseli',
-    'mint',
-    'basil',
-    'rosemary',
-    'thyme',
-    'oregano',
-    'sage',
-    'cilantro',
-    'dill',
-    'chives',
-    'tarragon',
-    'marjoram',
-  ],
-  'Kacang-kacangan': ['kacang'],
-  'Umbi-umbian': ['kentang', 'ubi', 'singkong', 'talas', 'ganyong'],
-  'Buah-buahan': [
-    'apel',
-    'jeruk',
-    'mangga',
-    'pisang',
-    'semangka',
-    'anggur',
-    'pepaya',
-    'melon',
-  ],
+const formatDate = (dateString) => {
+  if (!dateString) return '';
+  const options = { day: 'numeric', month: 'short', year: 'numeric' };
+  return new Date(dateString).toLocaleDateString('id-ID', options);
 };
 
-/**
- * Mendapatkan kategori tanaman dari nama produk.
- * @param {string} cropName (Nama tanaman).
- * @returns {string} Kategori tanaman.
- */
-const getCropCategory = (cropName) => {
-  const name = cropName.toLowerCase();
-
-  for (const category in CROP_CATEGORY_MAP) {
-    if (CROP_CATEGORY_MAP[category].some((keyword) => name.includes(keyword))) {
-      return category;
-    }
+const convertToKg = (value, unit) => {
+  const unitLower = unit.toLowerCase();
+  if (unitLower.includes('ton')) {
+    return value * 1000;
   }
-
-  return 'Sayuran'; // Default category
+  if (unitLower.includes('kuintal') || unitLower.includes('kwintal')) {
+    return value * 100;
+  }
+  return value;
 };
 
-// Warna status untuk label
 const getStatusColor = (status) => {
   switch (status.toLowerCase()) {
-    case 'selesai': // Rencana Tanam
-    case 'tersedia': // Kebutuhan Panen
+    case 'selesai':
+    case 'tersedia':
       return 'bg-mint-green/12 text-mint-green border border-mint-green/30';
-    case 'proses': // Rencana Tanam
+    case 'proses':
       return 'bg-teal-blue/12 text-teal-blue border border-teal-blue/30';
-    case 'mencari': // Kebutuhan Panen
-      return 'bg-red-100 text-red-700 border border-red-200';
+    case 'mencari':
+      return 'bg-yellow-100 text-yellow-700 border border-yellow-200';
+    case 'direncanakan':
+      return 'bg-blue-100 text-blue-700 border border-blue-200';
     default:
       return 'bg-gray-100 text-gray-700 border border-gray-200';
   }
@@ -92,27 +57,55 @@ const getStatusColor = (status) => {
 
 // --- KOMPONEN ANAK (REUSABLE UI COMPONENTS) ---
 
-// Komponen Kartu Statistik Total
+const Avatar = ({ src, alt }) => {
+  const [imageError, setImageError] = useState(false);
+
+  useEffect(() => {
+    // Reset error state jika src berubah
+    setImageError(false);
+  }, [src]);
+
+  const handleImageError = () => {
+    setImageError(true);
+  };
+
+  // Tampilkan fallback jika tidak ada src atau jika gambar error
+  if (!src || imageError) {
+    return (
+      <div className="w-8 h-8 bg-light-green/20 rounded-full flex items-center justify-center border border-light-green/30">
+        <FaUser className="w-4 h-4 text-light-green" />
+      </div>
+    );
+  }
+
+  // Tampilkan gambar jika berhasil
+  return (
+    <img
+      src={src}
+      alt={alt}
+      className="w-8 h-8 rounded-full border border-light-green/30 object-cover"
+      onError={handleImageError}
+    />
+  );
+};
+
 const StatTotalCard = ({ title, icon, data, showDetails, onToggleDetails }) => (
   <div className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
     <div className="flex items-center justify-between">
       <div>
         <p className="text-sm font-medium text-dark-green/70 mb-1">{title}</p>
         <p className="text-3xl font-bold text-dark-green mb-3">
-          {data.grandTotal.toLocaleString()} <span className="text-lg">Kg</span>
+          {data.grandTotal.toLocaleString('id-ID')}{' '}
+          <span className="text-lg">Kg</span>
         </p>
-
-        {/* Rincian */}
         <div className="text-xs text-dark-green/60">
           {!showDetails ? (
-            <div>
-              <button
-                onClick={onToggleDetails}
-                className="text-teal-blue hover:text-dark-green font-medium text-xs"
-              >
-                Rincian →
-              </button>
-            </div>
+            <button
+              onClick={onToggleDetails}
+              className="text-teal-blue hover:text-dark-green font-medium text-xs"
+            >
+              Rincian →
+            </button>
           ) : (
             <div>
               {Object.entries(data.totalsByCategory).map(
@@ -122,8 +115,8 @@ const StatTotalCard = ({ title, icon, data, showDetails, onToggleDetails }) => (
                     className="mb-1 flex justify-between items-center bg-light-green/10 rounded-full px-3 py-1"
                   >
                     <strong>{category}</strong>
-                    <span className="flex-1 text-right ml-20 font-semibold">
-                      {total.toLocaleString()} kg
+                    <span className="flex-1 text-right ml-4 font-semibold">
+                      {total.toLocaleString('id-ID')} kg
                     </span>
                   </div>
                 )
@@ -138,119 +131,77 @@ const StatTotalCard = ({ title, icon, data, showDetails, onToggleDetails }) => (
           )}
         </div>
       </div>
-
-      <div className="opacity-90 pr-8">{icon}</div>
+      <div className="opacity-90">{icon}</div>
     </div>
   </div>
 );
 
-// Komponen Kartu Data (Rencana Tanam dan Kebutuhan Panen)
-const DataCard = ({ item, type }) => {
-  const isPlanting = type === 'rencana';
-
-  return (
-    <div className="bg-cream/50 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 border border-dark-green/10 overflow-hidden">
-      {/* Header */}
-      <div className="p-3">
-        <div className="flex items-start justify-between">
-          <h3 className="text-base font-bold text-dark-green line-clamp-1 flex-1 mr-2">
-            {item.name}
-          </h3>
-          <span
-            className={`px-2 py-1 text-xs font-semibold rounded-full whitespace-nowrap ${getStatusColor(
-              item.status
-            )}`}
-          >
-            {item.status}
-          </span>
-        </div>
+const DataCard = ({ item }) => (
+  <div className="bg-cream/50 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 border border-dark-green/10 overflow-hidden">
+    <div className="p-3">
+      <div className="flex items-start justify-between">
+        <h3 className="text-base font-bold text-dark-green line-clamp-1 flex-1 mr-2">
+          {item.name}
+        </h3>
+        <span
+          className={`px-2 py-1 text-xs font-semibold rounded-full whitespace-nowrap ${getStatusColor(
+            item.status
+          )}`}
+        >
+          {item.status}
+        </span>
       </div>
-
-      {isPlanting && (
-        <div className="px-3 mb-3">
-          <img
-            src={item.farmImage}
-            alt={`Kebun ${item.name}`}
-            className="w-full h-35 object-cover rounded-lg"
-          />
-        </div>
-      )}
-
-      {/* Profile/Buyer Section */}
+    </div>
+    {item.image && (
       <div className="px-3 mb-3">
-        <div className="flex items-center gap-2">
-          {isPlanting ? (
-            item.farmer.image ? (
-              <img
-                src={item.farmer.image}
-                alt={item.farmer.name}
-                className="w-8 h-8 rounded-full border border-light-green/30"
-              />
-            ) : (
-              <div className="w-8 h-8 bg-light-green/20 rounded-full flex items-center justify-center border border-light-green/30">
-                <FaUser className="w-4 h-4 text-light-green" />
-              </div>
-            )
-          ) : (
-            <>
-              {item.buyer.image ? (
-                <img
-                  src={item.buyer.image}
-                  alt={item.buyer.name}
-                  className="w-8 h-8 rounded-full border border-teal-blue/30"
-                />
-              ) : (
-                <div className="w-8 h-8 bg-teal-blue/20 rounded-full flex items-center justify-center border border-teal-blue/30">
-                  <FaUser className="w-4 h-4 text-teal-blue" />
-                </div>
-              )}
-            </>
-          )}
-
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-dark-green truncate">
-              {isPlanting ? item.farmer.name : item.buyer.name}
-            </p>
-            <p className="text-xs text-dark-green/60 truncate">
-              {isPlanting ? item.location : item.locationDua}
-            </p>
-          </div>
-        </div>
+        <img
+          src={item.image}
+          alt={`Gambar ${item.name}`}
+          className="w-full h-32 object-cover rounded-lg bg-gray-200"
+        />
       </div>
+    )}
+    <div className="px-3 mb-3">
+      <div className="flex items-center gap-2">
+        <Avatar src={item.user.avatar} alt={item.user.name} />
 
-      {/* Details */}
-      <div className="px-3 pb-3 space-y-2">
-        <div className="flex justify-between items-center">
-          <span className="text-xs text-dark-green/60">Periode:</span>
-          <span className="text-xs font-medium text-dark-green">
-            {item.period}
-          </span>
-        </div>
-        {isPlanting && item.area && (
-          <div className="flex justify-between items-center">
-            <span className="text-xs text-dark-green/60">Luas Lahan:</span>
-            <span className="text-xs font-medium text-dark-green">
-              {item.area}
-            </span>
-          </div>
-        )}
-        <div className="flex justify-between items-center">
-          <span className="text-xs text-dark-green/60">
-            {isPlanting ? 'Estimasi Hasil:' : 'Jumlah Dibutuhkan:'}
-          </span>
-          <span className="text-xs font-semibold text-teal-blue">
-            {item.quantity}
-          </span>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold text-dark-green truncate">
+            {item.user.name}
+          </p>
+          <p className="text-xs text-dark-green/60 truncate">{item.location}</p>
         </div>
       </div>
     </div>
-  );
-};
+    <div className="px-3 pb-3 space-y-2">
+      <div className="flex justify-between items-center">
+        <span className="text-xs text-dark-green/60">Periode:</span>
+        <span className="text-xs font-medium text-dark-green">
+          {item.period}
+        </span>
+      </div>
+      {item.area && (
+        <div className="flex justify-between items-center">
+          <span className="text-xs text-dark-green/60">Luas Lahan:</span>
+          <span className="text-xs font-medium text-dark-green">
+            {item.area}
+          </span>
+        </div>
+      )}
+      <div className="flex justify-between items-center">
+        <span className="text-xs text-dark-green/60">
+          {item.quantityLabel}:
+        </span>
+        <span className="text-xs font-semibold text-teal-blue">
+          {item.quantity}
+        </span>
+      </div>
+    </div>
+  </div>
+);
 
-// Komponen Pagination
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   if (totalPages <= 1) return null;
-
   return (
     <div className="flex justify-center items-center mt-8 space-x-2">
       <button
@@ -261,26 +212,21 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
         <FaChevronLeft className="mr-1" size={12} />
         Sebelumnya
       </button>
-
       <div className="flex space-x-1">
-        {[...Array(totalPages)].map((_, index) => {
-          const page = index + 1;
-          return (
-            <button
-              key={page}
-              onClick={() => onPageChange(page)}
-              className={`px-3 py-2 text-sm font-medium rounded-lg ${
-                currentPage === page
-                  ? 'bg-teal-blue text-white'
-                  : 'text-dark-green bg-white border border-light-green/30 hover:bg-cream'
-              }`}
-            >
-              {page}
-            </button>
-          );
-        })}
+        {[...Array(totalPages)].map((_, index) => (
+          <button
+            key={index + 1}
+            onClick={() => onPageChange(index + 1)}
+            className={`px-3 py-2 text-sm font-medium rounded-lg ${
+              currentPage === index + 1
+                ? 'bg-teal-blue text-white'
+                : 'text-dark-green bg-white border border-light-green/30 hover:bg-cream'
+            }`}
+          >
+            {index + 1}
+          </button>
+        ))}
       </div>
-
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
@@ -296,128 +242,193 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 // --- KOMPONEN UTAMA ---
 
 const Stok = () => {
+  // State untuk Data dan UI
+  const [allPlantingPlans, setAllPlantingPlans] = useState([]);
+  const [allHarvestNeeds, setAllHarvestNeeds] = useState([]);
   const [activeTab, setActiveTab] = useState('rencana');
   const [showPlantingDetails, setShowPlantingDetails] = useState(false);
   const [showHarvestDetails, setShowHarvestDetails] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
+  // State untuk Filter dan Sort
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Semua');
   const [sortBy, setSortBy] = useState('name');
-  const [sortOrder, setSortOrder] = useState('asc');
 
-  // Memoized calculation of totals
-  // Fungsi menghitung total kuantitas per kategori dan grand total (jika ada perubahan data, ini akan dihitung ulang)
-  const { plantingData, harvestData } = useMemo(() => {
-    const calculateData = (data) => {
-      const totalsByCrop = {};
+  // State untuk Loading dan Error
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // --- EFEK UNTUK MENGAMBIL DATA API ---
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const [plansData, needsData] = await Promise.all([
+          fetchAllPlantingPlans(),
+          fetchAllHarvestNeeds(),
+        ]);
+        setAllPlantingPlans(plansData);
+        setAllHarvestNeeds(needsData);
+      } catch (err) {
+        setError(err.message || 'Gagal memuat data dari server.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadData();
+  }, []);
+
+  // --- TRANSFORMASI DATA DARI API ---
+  const { processedPlantingPlans, processedHarvestNeeds } = useMemo(() => {
+    const now = new Date();
+
+    const transformPlan = (item) => {
+      const startDate = new Date(item.plantingStart);
+      const endDate = new Date(item.plantingEnd);
+      let status = 'Direncanakan';
+      if (now >= startDate && now <= endDate) {
+        status = 'Proses';
+      } else if (now > endDate) {
+        status = 'Selesai';
+      }
+      return {
+        ...item,
+        type: 'rencana',
+        status,
+        period: `${formatDate(item.plantingStart)} - ${formatDate(
+          item.plantingEnd
+        )}`,
+        area: `${item.landArea} ${item.landAreaUnit}`,
+        quantity: `${item.estimatedYield.toLocaleString('id-ID')} ${
+          item.yieldUnit
+        }`,
+        quantityKg: convertToKg(item.estimatedYield, item.yieldUnit),
+        quantityLabel: 'Estimasi Hasil',
+        image: item.category.image,
+      };
+    };
+
+    const transformNeed = (item) => {
+      const startDate = new Date(item.needStart);
+      const endDate = new Date(item.needEnd);
+      let status = 'Tersedia';
+
+      if (now >= startDate && now <= endDate) {
+        status = 'Mencari';
+      }
+
+      return {
+        ...item,
+        type: 'kebutuhan',
+        status,
+        period: `${formatDate(item.needStart)} - ${formatDate(item.needEnd)}`,
+        quantity: `${item.amountNeeded.toLocaleString('id-ID')} ${
+          item.amountUnit
+        }`,
+        quantityKg: convertToKg(item.amountNeeded, item.amountUnit),
+        quantityLabel: 'Jumlah Dibutuhkan',
+        location: item.user.whatsappNumber || 'Kontak via Aplikasi',
+        image: item.category.image,
+      };
+    };
+
+    return {
+      processedPlantingPlans: allPlantingPlans.map(transformPlan),
+      processedHarvestNeeds: allHarvestNeeds.map(transformNeed),
+    };
+  }, [allPlantingPlans, allHarvestNeeds]);
+
+  const { plantingData, harvestData, categories } = useMemo(() => {
+    const calculateTotals = (data) => {
       const totalsByCategory = {};
       let grandTotal = 0;
 
       data.forEach((item) => {
-        const quantityStr = item.quantity.replace(/[^0-9.]/g, '');
-        let quantity = parseFloat(quantityStr);
-        if (item.quantity.toLowerCase().includes('ton')) {
-          quantity *= 1000;
-        }
+        const quantity = item.quantityKg;
         grandTotal += quantity;
-
-        // Kalkulasi total per tanaman (untuk potensi grafik)
-        const cropName = item.name.split(' ')[0];
-        totalsByCrop[cropName] = (totalsByCrop[cropName] || 0) + quantity;
-
-        // Kalkulasi total per kategori (untuk detail kartu)
-        const category = getCropCategory(item.name);
-        totalsByCategory[category] =
-          (totalsByCategory[category] || 0) + quantity;
+        const categoryName = item.category.name;
+        totalsByCategory[categoryName] =
+          (totalsByCategory[categoryName] || 0) + quantity;
       });
-
-      return { grandTotal, totalsByCrop, totalsByCategory };
+      return { grandTotal, totalsByCategory };
     };
 
-    return {
-      plantingData: calculateData(plantingPlans),
-      harvestData: calculateData(harvestNeeds),
-    };
-  }, []); // Hanya dijalankan sekali karena data dummy statis
-
-  // Memoized unique categories for filter dropdown
-  // Fungsi untuk mengambil kategori tanaman (jika ada perubahan data, ini akan dihitung ulang)
-  const { plantingCategories, harvestCategories } = useMemo(() => {
     const getCategories = (data) => [
       'Semua',
-      ...new Set(data.map((item) => getCropCategory(item.name))),
+      ...new Set(data.map((item) => item.category.name)),
     ];
 
-    return {
-      plantingCategories: getCategories(plantingPlans),
-      harvestCategories: getCategories(harvestNeeds),
-    };
-  }, []);
+    const currentData =
+      activeTab === 'rencana' ? processedPlantingPlans : processedHarvestNeeds;
 
-  // Memoized filtering and sorting
-  // Fungsi untuk memfilter dan mengurutkan data berdasarkan tab aktif, kata kunci pencarian, kategori terpilih, dan opsi pengurutan
+    return {
+      plantingData: calculateTotals(processedPlantingPlans),
+      harvestData: calculateTotals(processedHarvestNeeds),
+      categories: getCategories(currentData),
+    };
+  }, [processedPlantingPlans, processedHarvestNeeds, activeTab]);
+
+  // --- FILTERING DAN SORTING (MEMOIZED) ---
   const filteredData = useMemo(() => {
-    const data = activeTab === 'rencana' ? plantingPlans : harvestNeeds;
-    const isPlanting = activeTab === 'rencana';
+    const data =
+      activeTab === 'rencana' ? processedPlantingPlans : processedHarvestNeeds;
 
     const filtered = data.filter((item) => {
       const searchLower = searchTerm.toLowerCase();
-
       const matchesSearch =
         item.name.toLowerCase().includes(searchLower) ||
-        (isPlanting && item.farmer.name.toLowerCase().includes(searchLower)) ||
-        (isPlanting && item.location.toLowerCase().includes(searchLower)) ||
-        (!isPlanting && item.buyer.toLowerCase().includes(searchLower));
-
+        item.user.name.toLowerCase().includes(searchLower) ||
+        item.location.toLowerCase().includes(searchLower);
       const matchesCategory =
-        selectedCategory === 'Semua' ||
-        getCropCategory(item.name) === selectedCategory;
-
+        selectedCategory === 'Semua' || item.category.name === selectedCategory;
       return matchesSearch && matchesCategory;
     });
 
     return filtered.sort((a, b) => {
       let aValue, bValue;
       switch (sortBy) {
-        case 'name':
-          aValue = a.name;
-          bValue = b.name;
-          break;
-        case 'farmer':
-          aValue = a.farmer.name;
-          bValue = b.farmer.name;
-          break;
-        case 'buyer':
-          aValue = a.buyer;
-          bValue = b.buyer;
+        case 'user':
+          aValue = a.user.name;
+          bValue = b.user.name;
           break;
         case 'location':
           aValue = a.location;
           bValue = b.location;
           break;
         case 'period':
-          aValue = a.period;
-          bValue = b.period;
+          aValue = new Date(
+            a.type === 'rencana' ? a.plantingStart : a.needStart
+          );
+          bValue = new Date(
+            b.type === 'rencana' ? b.plantingStart : b.needStart
+          );
           break;
         case 'status':
           aValue = a.status;
           bValue = b.status;
           break;
+        case 'name':
         default:
           aValue = a.name;
           bValue = b.name;
           break;
       }
-
-      return sortOrder === 'asc'
-        ? String(aValue).localeCompare(String(bValue))
-        : String(bValue).localeCompare(String(aValue));
+      if (typeof aValue === 'string') return aValue.localeCompare(bValue);
+      if (aValue instanceof Date) return aValue - bValue;
+      return 0;
     });
-  }, [activeTab, searchTerm, selectedCategory, sortBy, sortOrder]);
+  }, [
+    activeTab,
+    searchTerm,
+    selectedCategory,
+    sortBy,
+    processedPlantingPlans,
+    processedHarvestNeeds,
+  ]);
 
-  // Pagination
-  // Fungsi untuk memotong data yang sudah difilter dan diurutkan berdasarkan halaman saat ini
+  // --- PAGINATION ---
   const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
   const currentPageData = filteredData.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
@@ -430,7 +441,51 @@ const Stok = () => {
     setSearchTerm('');
     setSelectedCategory('Semua');
     setSortBy('name');
-    setSortOrder('asc');
+  };
+
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
+  // --- RENDER LOGIC ---
+  const renderContent = () => {
+    if (isLoading)
+      return <div className="text-center py-12">Memuat data...</div>;
+    if (error)
+      return (
+        <div className="text-center py-12 text-red-600">
+          <FaExclamationCircle className="mx-auto mb-2" />
+          {error}
+        </div>
+      );
+    if (currentPageData.length === 0)
+      return (
+        <div className="text-center py-12">
+          <FaSearch size={48} className="mx-auto text-dark-green/40 mb-4" />
+          <h3 className="text-xl font-bold text-dark-green mb-2">
+            Tidak ada data ditemukan
+          </h3>
+          <p className="text-dark-green/70">
+            Coba ubah kata kunci pencarian atau filter kategori Anda.
+          </p>
+        </div>
+      );
+    return (
+      <>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {currentPageData.map((item) => (
+            <DataCard key={`${item.type}-${item.id}`} item={item} />
+          ))}
+        </div>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      </>
+    );
   };
 
   return (
@@ -449,18 +504,12 @@ const Stok = () => {
               <span className="mx-2">/</span>
               <span className="text-gray-800">Stok</span>
             </div>
-
             <h1 className="text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-[#377638] to-[#7AAF59] p-2 bg-clip-text text-transparent tracking-tight">
               Manajemen Stok Pertanian
             </h1>
-
             <p className="mt-4 max-w-3xl mx-auto text-lg text-gray-600">
               Pantau rencana tanam para petani dan lihat kebutuhan panen dari
               para pembeli dengan mudah dan efisien.
-            </p>
-            <p className="mt-3 max-w-3xl mx-auto text-xs italic text-gray-400">
-              *Unduh Aplikasi Mobile <b>PanenKita</b> untuk menghubungi petani
-              dan pembeli secara langsung.
             </p>
           </div>
         </div>
@@ -468,25 +517,23 @@ const Stok = () => {
         {/* Kartu Statistik */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mb-8">
           <StatTotalCard
-            title="Total Rencana Tanam"
+            title="Total Estimasi Hasil Panen"
             icon={<FaSeedling className="text-dark-green" size={40} />}
             data={plantingData}
             showDetails={showPlantingDetails}
-            onToggleDetails={() => setShowPlantingDetails((prev) => !prev)}
+            onToggleDetails={() => setShowPlantingDetails((p) => !p)}
           />
-
           <StatTotalCard
             title="Total Kebutuhan Panen"
             icon={<FaWheatAwn className="text-mustard-yellow" size={40} />}
             data={harvestData}
             showDetails={showHarvestDetails}
-            onToggleDetails={() => setShowHarvestDetails((prev) => !prev)}
+            onToggleDetails={() => setShowHarvestDetails((p) => !p)}
           />
         </div>
 
         {/* Konten Utama dengan Tab */}
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-          {/* Header Tab */}
           <div className="border-b border-dark-green/20 bg-white/80">
             <nav className="-mb-px flex space-x-8 px-6">
               <button
@@ -498,8 +545,7 @@ const Stok = () => {
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  <FaSeedling />
-                  Rencana Tanam ({plantingPlans.length})
+                  <FaSeedling /> Rencana Tanam ({allPlantingPlans.length})
                 </div>
               </button>
               <button
@@ -511,8 +557,7 @@ const Stok = () => {
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  <LuWheat />
-                  Kebutuhan Hasil Panen ({harvestNeeds.length})
+                  <LuWheat /> Kebutuhan Panen ({allHarvestNeeds.length})
                 </div>
               </button>
             </nav>
@@ -521,7 +566,6 @@ const Stok = () => {
           {/* Kontrol Filter, Search, Sort */}
           <div className="pt-6 px-6 bg-white/80">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              {/* Search lebih lebar */}
               <div className="relative md:col-span-2">
                 <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
@@ -529,7 +573,7 @@ const Stok = () => {
                   placeholder={
                     activeTab === 'rencana'
                       ? 'Cari nama, petani, lokasi...'
-                      : 'Cari nama, pembeli...'
+                      : 'Cari nama, kontak...'
                   }
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -537,7 +581,6 @@ const Stok = () => {
                 />
               </div>
 
-              {/* Filter */}
               <div className="relative">
                 <FaFilter className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                 <select
@@ -545,10 +588,7 @@ const Stok = () => {
                   onChange={(e) => setSelectedCategory(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-blue appearance-none"
                 >
-                  {(activeTab === 'rencana'
-                    ? plantingCategories
-                    : harvestCategories
-                  ).map((cat) => (
+                  {categories.map((cat) => (
                     <option key={cat} value={cat}>
                       {cat}
                     </option>
@@ -556,7 +596,6 @@ const Stok = () => {
                 </select>
               </div>
 
-              {/* Sort */}
               <div className="relative">
                 <FaSortAmountDown className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                 <select
@@ -565,12 +604,9 @@ const Stok = () => {
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-blue appearance-none"
                 >
                   <option value="name">Nama Produk</option>
-                  {activeTab === 'rencana' && (
-                    <option value="farmer">Petani</option>
-                  )}
-                  {activeTab === 'kebutuhan' && (
-                    <option value="buyer">Pembeli</option>
-                  )}
+                  <option value="user">
+                    {activeTab === 'rencana' ? 'Petani' : 'Pembeli'}
+                  </option>
                   {activeTab === 'rencana' && (
                     <option value="location">Lokasi</option>
                   )}
@@ -582,36 +618,7 @@ const Stok = () => {
           </div>
 
           {/* Konten Tab */}
-          <div className="p-6 bg-white/80">
-            {currentPageData.length > 0 ? (
-              <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                  {currentPageData.map((item) => (
-                    <DataCard key={item.id} item={item} type={activeTab} />
-                  ))}
-                </div>
-
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={(page) => setCurrentPage(page)}
-                />
-              </>
-            ) : (
-              <div className="text-center py-12">
-                <FaSearch
-                  size={48}
-                  className="mx-auto text-dark-green/40 mb-4"
-                />
-                <h3 className="text-xl font-bold text-dark-green mb-2">
-                  Tidak ada tanaman ditemukan
-                </h3>
-                <p className="text-dark-green/70">
-                  Coba ubah kata kunci pencarian atau filter kategori Anda.
-                </p>
-              </div>
-            )}
-          </div>
+          <div className="p-6">{renderContent()}</div>
         </div>
       </div>
     </div>
