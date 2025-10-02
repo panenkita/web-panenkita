@@ -23,19 +23,19 @@ async function fetchData(url, entityName) {
   }
 }
 
-// FUNGSI FETCH PRODUK
+// Fungsi Fetch Produk
 export async function fetchAllProducts() {
   const API_URL = 'https://backend-panenkita.up.railway.app/web/products';
   return fetchData(API_URL, 'produk');
 }
 
-// FUNGSI FETCH RENCANA TANAM
+// Fungsi Fetch Rencana Tanam
 export async function fetchAllPlantingPlans() {
   const API_URL = 'https://backend-panenkita.up.railway.app/web/planting-plans';
   return fetchData(API_URL, 'rencana tanam');
 }
 
-// FUNGSI FETCH KEBUTUHAN PANEN
+// Fungsi Fetch Kebutuhan Panen
 export async function fetchAllHarvestNeeds() {
   const API_URL = 'https://backend-panenkita.up.railway.app/web/harvest-needs';
   return fetchData(API_URL, 'kebutuhan panen');
