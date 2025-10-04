@@ -169,7 +169,11 @@ const DataCard = ({ item }) => (
           <p className="text-sm font-semibold text-dark-green truncate">
             {item.user.name}
           </p>
-          <p className="text-xs text-dark-green/60 truncate">{item.location}</p>
+          <p className="text-xs text-dark-green/60 truncate">
+            {item.user.village && item.user.district
+              ? `Desa ${item.user.village}, Kec. ${item.user.district}`
+              : 'Belum ada alamat'}
+          </p>
         </div>
       </div>
     </div>

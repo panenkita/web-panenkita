@@ -124,9 +124,10 @@ const ProductCard = ({ product }) => {
                 {product.user.name}
               </p>
 
-              {/* Lokasi tidak ada di API, bisa dihilangkan atau diberi nilai default */}
               <p className="text-xs text-dark-green/60 truncate">
-                {product.user.whatsappNumber || 'Kontak tidak tersedia'}
+                {product.user.village && product.user.district
+                  ? `Desa ${product.user.village}, Kec. ${product.user.district}`
+                  : 'Belum ada alamat'}
               </p>
             </div>
           </div>
