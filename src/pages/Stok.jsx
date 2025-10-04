@@ -42,10 +42,8 @@ const convertToKg = (value, unit) => {
 const getStatusColor = (status) => {
   switch (status.toLowerCase()) {
     case 'selesai':
-    case 'tersedia':
       return 'bg-mint-green/12 text-mint-green border border-mint-green/30';
     case 'proses':
-      return 'bg-teal-blue/12 text-teal-blue border border-teal-blue/30';
     case 'mencari':
       return 'bg-yellow-100 text-yellow-700 border border-yellow-200';
     case 'direncanakan':
@@ -292,11 +290,13 @@ const Stok = () => {
       const startDate = new Date(item.plantingStart);
       const endDate = new Date(item.plantingEnd);
       let status = 'Direncanakan';
+
       if (now >= startDate && now <= endDate) {
         status = 'Proses';
       } else if (now > endDate) {
         status = 'Selesai';
       }
+
       return {
         ...item,
         type: 'rencana',
@@ -317,10 +317,12 @@ const Stok = () => {
     const transformNeed = (item) => {
       const startDate = new Date(item.needStart);
       const endDate = new Date(item.needEnd);
-      let status = 'Tersedia';
+      let status = 'Direncanakan';
 
       if (now >= startDate && now <= endDate) {
         status = 'Mencari';
+      } else if (now > endDate) {
+        status = 'Selesai';
       }
 
       return {
