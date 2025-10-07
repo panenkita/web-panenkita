@@ -9,9 +9,8 @@ import {
   FaStar,
   FaHandshake,
   FaBoxOpen,
-  FaSeedling,
 } from 'react-icons/fa';
-import { PiPlantFill } from 'react-icons/pi';
+import { PiPlant, PiPlantFill } from 'react-icons/pi';
 import { FiHeart, FiPackage } from 'react-icons/fi';
 import { FiBox, FiShoppingCart, FiMessageSquare } from 'react-icons/fi';
 
@@ -111,7 +110,7 @@ const Beranda = () => {
 
   const stats = [
     {
-      icon: <FaSeedling size={32} />,
+      icon: <PiPlant size={32} />,
       end: allPlantingPlans.length,
       suffix: '+',
       label: 'Rencana Tanam',
