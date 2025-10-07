@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import CountUp from 'react-countup';
 import { useInView } from 'react-intersection-observer';
 
@@ -9,11 +9,11 @@ import {
   FaStar,
   FaHandshake,
   FaBoxOpen,
+  FaSeedling,
 } from 'react-icons/fa';
 import { PiPlantFill } from 'react-icons/pi';
-import { FiHeart, FiMap, FiPackage, FiUsers } from 'react-icons/fi';
+import { FiHeart, FiPackage } from 'react-icons/fi';
 import { FiBox, FiShoppingCart, FiMessageSquare } from 'react-icons/fi';
-import { FaUsersLine } from 'react-icons/fa6';
 
 // Assets
 import heroPetani from '../assets/hero-petani.jpg';
@@ -25,7 +25,38 @@ import screenshotStok from '../assets/app-screenshot.jpg';
 import screenshotProduk from '../assets/app-screenshot.jpg';
 import screenshotChat from '../assets/app-screenshot.jpg';
 
+// Data Fetching
+import {
+  fetchAllHarvestNeeds,
+  fetchAllPlantingPlans,
+  fetchAllProducts,
+} from '../data/api';
+import { LuWheat } from 'react-icons/lu';
+
 const Beranda = () => {
+  const [allProducts, setAllProducts] = useState([]);
+  const [allPlantingPlans, setAllPlantingPlans] = useState([]);
+  const [allHarvestNeeds, setAllHarvestNeeds] = useState([]);
+
+  // --- EFEK UNTUK MENGAMBIL DATA ---
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        const productsData = await fetchAllProducts();
+        const plantingPlansData = await fetchAllPlantingPlans();
+        const harvestNeedsData = await fetchAllHarvestNeeds();
+
+        setAllProducts(productsData);
+        setAllPlantingPlans(plantingPlansData);
+        setAllHarvestNeeds(harvestNeedsData);
+      } catch (err) {
+        console.error('Gagal memuat data:', err);
+      }
+    };
+
+    loadProducts();
+  }, []); // Dependency array kosong, hanya berjalan sekali saat mount
+
   const handleDownload = () => {
     window.open('https://play.google.com/', '_blank');
   };
@@ -80,22 +111,22 @@ const Beranda = () => {
 
   const stats = [
     {
-      icon: <FiUsers size={32} />,
-      end: 205,
+      icon: <FaSeedling size={32} />,
+      end: allPlantingPlans.length,
       suffix: '+',
-      label: 'Petani Terdaftar',
+      label: 'Rencana Tanam',
     },
     {
-      icon: <FaUsersLine size={32} />,
-      end: 189,
+      icon: <LuWheat size={32} />,
+      end: allHarvestNeeds.length,
       suffix: '+',
-      label: 'Pembeli Terdaftar',
+      label: 'Kebutuhan Hasil Panen',
     },
     {
       icon: <FiPackage size={32} />,
-      end: 156,
+      end: allProducts.length,
       suffix: '+',
-      label: 'Jenis Produk Tersedia',
+      label: 'Produk Tersedia',
     },
     {
       icon: <FiHeart size={32} />,

@@ -6,6 +6,7 @@ import {
   FaMapMarkerAlt,
   FaEnvelope,
   FaPhone,
+  FaTiktok,
 } from 'react-icons/fa';
 
 // Assets
@@ -95,8 +96,11 @@ const Footer = () => {
             <SocialLink href="https://www.instagram.com/panenkita.official">
               <FaInstagram size={20} />
             </SocialLink>
-            <SocialLink href="https://www.facebook.com/profile.php?id=61581498903831">
+            <SocialLink href="#">
               <FaFacebookF size={20} />
+            </SocialLink>
+            <SocialLink href="#">
+              <FaTiktok size={20} />
             </SocialLink>
           </div>
         </div>
