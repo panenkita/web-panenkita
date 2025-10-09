@@ -351,7 +351,9 @@ const Stok = () => {
       const totalsByCategory = {};
       let grandTotal = 0;
 
-      data.forEach((item) => {
+      const activeData = data.filter((item) => item.status !== 'Selesai');
+
+      activeData.forEach((item) => {
         const quantity = item.quantityKg;
         grandTotal += quantity;
         const categoryName = item.category.name;
@@ -514,8 +516,12 @@ const Stok = () => {
               Manajemen Stok Pertanian
             </h1>
             <p className="mt-4 max-w-3xl mx-auto text-lg text-gray-600">
-              Pantau rencana tanam para petani dan lihat kebutuhan panen dari
-              para pembeli dengan mudah dan efisien.
+              Pantau rencana tanam para petani dan lihat kebutuhan hasil panen
+              dari para pembeli dengan mudah dan efisien.
+            </p>
+            <p className="mt-3 max-w-3xl mx-auto text-xs italic text-gray-400">
+              *Download Aplikasi Mobile <b>PanenKita</b> untuk menghubungi
+              petani dan pembeli secara langsung.
             </p>
           </div>
         </div>
@@ -523,14 +529,14 @@ const Stok = () => {
         {/* Kartu Statistik */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mb-8">
           <StatTotalCard
-            title="Total Estimasi Hasil Panen"
+            title="Total Estimasi Rencana Tanam"
             icon={<FaSeedling className="text-dark-green" size={40} />}
             data={plantingData}
             showDetails={showPlantingDetails}
             onToggleDetails={() => setShowPlantingDetails((p) => !p)}
           />
           <StatTotalCard
-            title="Total Kebutuhan Panen"
+            title="Total Kebutuhan Hasil Panen"
             icon={<FaWheatAwn className="text-mustard-yellow" size={40} />}
             data={harvestData}
             showDetails={showHarvestDetails}
@@ -563,7 +569,7 @@ const Stok = () => {
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  <LuWheat /> Kebutuhan Panen ({allHarvestNeeds.length})
+                  <LuWheat /> Kebutuhan Hasil Panen ({allHarvestNeeds.length})
                 </div>
               </button>
             </nav>

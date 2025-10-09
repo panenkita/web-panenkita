@@ -423,8 +423,8 @@ const Produk = () => {
               lokal terpercaya di berbagai daerah.
             </p>
             <p className="mt-3 max-w-3xl mx-auto text-xs italic text-gray-400">
-              *Unduh Aplikasi Mobile <b>PanenKita</b> untuk menghubungi petani
-              secara langsung.
+              *Download Aplikasi Mobile <b>PanenKita</b> untuk menghubungi
+              petani secara langsung.
             </p>
           </div>
         </div>
