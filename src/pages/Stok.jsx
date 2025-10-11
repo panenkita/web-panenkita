@@ -30,11 +30,15 @@ const formatDate = (dateString) => {
 
 const convertToKg = (value, unit) => {
   const unitLower = unit.toLowerCase();
+
   if (unitLower.includes('ton')) {
     return value * 1000;
   }
   if (unitLower.includes('kuintal') || unitLower.includes('kwintal')) {
     return value * 100;
+  }
+  if (unitLower.includes('gram')) {
+    return value / 1000;
   }
   return value;
 };
