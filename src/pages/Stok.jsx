@@ -619,7 +619,7 @@ const Stok = () => {
                   onChange={(e) => setSortBy(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-blue appearance-none"
                 >
-                  <option value="name">Nama Produk</option>
+                  <option value="name">Nama</option>
                   <option value="user">
                     {activeTab === 'rencana' ? 'Petani' : 'Pembeli'}
                   </option>
