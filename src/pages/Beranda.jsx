@@ -20,9 +20,9 @@ import circlePetani1 from '../assets/circle-petani-1.jpg';
 import circlePetani2 from '../assets/circle-petani-2.jpg';
 import circlePetani3 from '../assets/circle-petani-3.jpg';
 
-import screenshotStok from '../assets/app-screenshot.jpg';
-import screenshotProduk from '../assets/app-screenshot.jpg';
-import screenshotChat from '../assets/app-screenshot.jpg';
+import screenshotStok from '../assets/stock.png';
+import screenshotProduk from '../assets/product.png';
+import screenshotChat from '../assets/history-whatsapp.png';
 
 // Data Fetching
 import {
