@@ -323,7 +323,7 @@ const Beranda = () => {
                 {/* Mockup Ponsel */}
                 <div className="relative w-[280px] sm:w-[300px] transition-all duration-300 transform group-hover:scale-105 group-hover:-translate-y-3">
                   <div className="bg-gray-800 p-2 sm:p-1.5 rounded-[1.5rem] shadow-lg">
-                    <div className="bg-black rounded-[1rem] overflow-hidden">
+                    <div className="bg-black rounded-[1.2rem] overflow-hidden">
                       <img
                         src={feature.image}
                         alt={feature.title}
