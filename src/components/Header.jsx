@@ -21,7 +21,10 @@ const Header = () => {
   };
 
   const handleDownload = () => {
-    window.open('https://play.google.com/', '_blank');
+    window.open(
+      'https://drive.google.com/file/d/17fGHfLW5p1QQYNY5801rfinGtkZPfGXw/view?usp=sharing',
+      '_blank'
+    );
   };
 
   return (
