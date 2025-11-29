@@ -20,9 +20,9 @@ import circlePetani1 from '../assets/circle-petani-1.jpg';
 import circlePetani2 from '../assets/circle-petani-2.jpg';
 import circlePetani3 from '../assets/circle-petani-3.jpg';
 
-import screenshotStok from '../assets/stock.png';
-import screenshotProduk from '../assets/product.png';
-import screenshotChat from '../assets/history-whatsapp.png';
+import screenshotStok from '../assets/screenshots/stock.jpg';
+import screenshotProduk from '../assets/screenshots/product.jpg';
+import screenshotChat from '../assets/screenshots/history-whatsapp.jpg';
 
 // Data Fetching
 import {
@@ -58,7 +58,7 @@ const Beranda = () => {
 
   const handleDownload = () => {
     window.open(
-      'https://drive.google.com/file/d/17fGHfLW5p1QQYNY5801rfinGtkZPfGXw/view?usp=sharing',
+      'https://drive.google.com/file/d/1a89IvoT3xzqcXYWOdPoATrCg7vGPiSV_/view?usp=sharing',
       '_blank'
     );
   };
