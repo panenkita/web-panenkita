@@ -10,6 +10,7 @@ import Beranda from './pages/Beranda';
 import Stok from './pages/Stok';
 import Produk from './pages/Produk';
 import Tentang from './pages/Tentang';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
             <Route path="/stok" element={<Stok />} />
             <Route path="/produk" element={<Produk />} />
             <Route path="/tentang" element={<Tentang />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           </Routes>
         </main>
         <Footer />
