@@ -401,6 +401,15 @@ export default function PrivacyPolicy() {
                 We may update Our Privacy Policy from time to time. Changes are
                 effective when posted on this page.
               </p>
+              <SectionTitle id="communication">
+                Communication via Third-Party Services
+              </SectionTitle>
+              <p>
+                Users may contact sellers or other users through third-party
+                applications (e.g., WhatsApp). PanenKita is not responsible for
+                messages, content, or interactions that occur outside of our
+                application.
+              </p>
               <hr className="border-gray-100 my-8" />
             </section>
 
