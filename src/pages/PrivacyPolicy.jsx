@@ -5,7 +5,6 @@ export default function PrivacyPolicy() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.title = 'Privacy Policy - PanenKita';
     window.scrollTo(0, 0);
   }, []);
 
