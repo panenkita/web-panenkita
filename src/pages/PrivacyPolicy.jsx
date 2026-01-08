@@ -9,25 +9,20 @@ export default function PrivacyPolicy() {
     window.scrollTo(0, 0);
   }, []);
 
+  // Updated Sections based on new content
   const sections = [
-    { id: 'overview', title: 'Overview' },
-    { id: 'interpretation-definitions', title: 'Interpretation & Definitions' },
-    { id: 'data-collected', title: 'Types of Data Collected' },
-    { id: 'use-of-data', title: 'Use of Your Personal Data' },
-    { id: 'sharing', title: 'When We Share Your Data' },
-    { id: 'retention', title: 'Retention' },
-    { id: 'transfer', title: 'Transfer of Your Personal Data' },
-    { id: 'delete', title: 'Delete Your Personal Data' },
-    { id: 'disclosure', title: 'Disclosure' },
-    { id: 'security', title: 'Security' },
-    { id: 'children', title: "Children's Privacy" },
-    { id: 'links', title: 'Links to Other Websites' },
-    { id: 'changes', title: 'Changes to this Privacy Policy' },
-    { id: 'child-safety', title: 'Child Safety Standards' },
-    { id: 'contact', title: 'Contact Us' },
+    { id: 'intro', title: '1. Introduction' },
+    { id: 'age', title: '2. Age Restriction' },
+    { id: 'collection', title: '3. Information We Collect' },
+    { id: 'usage', title: '4. How We Use Your Information' },
+    { id: 'whatsapp', title: '5. Communication (WhatsApp)' },
+    { id: 'retention', title: '6. Data Retention & Deletion' },
+    { id: 'security', title: '7. Security' },
+    { id: 'changes', title: '8. Changes to Policy' },
+    { id: 'contact', title: '9. Contact Us' },
   ];
 
-  // Helper component untuk Section Title agar konsisten
+  // Helper component for consistent Section Titles
   const SectionTitle = ({ children, id }) => (
     <h2
       id={id}
@@ -37,7 +32,7 @@ export default function PrivacyPolicy() {
     </h2>
   );
 
-  // Helper component untuk Sub-Heading
+  // Helper component for Sub-Headings
   const SubHeading = ({ children }) => (
     <h3 className="text-lg font-semibold text-teal-blue mt-6 mb-3">
       {children}
@@ -57,7 +52,7 @@ export default function PrivacyPolicy() {
               Privacy Policy
             </h1>
             <p className="mt-3 text-white/80 italic text-sm">
-              Last updated: December 12, 2025
+              Last updated: January 08, 2026
             </p>
           </div>
 
@@ -108,149 +103,103 @@ export default function PrivacyPolicy() {
         <div className="flex flex-col lg:flex-row gap-8 items-start animate-slide-up">
           {/* Main Content Card */}
           <div className="flex-1 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-10 w-full">
-            <section id="overview" className="mb-8">
+            {/* 1. Introduction */}
+            <section id="intro">
+              <SectionTitle id="intro">1. Introduction</SectionTitle>
               <p className="leading-relaxed mb-4">
-                This Privacy Policy describes Our policies and procedures on the
-                collection, use and disclosure of Your information when You use
-                the Service and tells You about Your privacy rights and how the
-                law protects You.
+                Welcome to{' '}
+                <strong className="text-dark-green">PanenKita</strong> ("we,"
+                "our," or "us"). PanenKita is a productivity application
+                designed to help farmers and buyers record harvest data and
+                manage stock. This Privacy Policy explains how we collect, use,
+                and protect your information when you use our mobile application
+                (the "Service").
               </p>
-              <p className="leading-relaxed">
-                We use Your Personal data to provide and improve the Service. By
-                using the Service, You agree to the collection and use of
-                information in accordance with this Privacy Policy.
-              </p>
-              <hr className="border-gray-100 my-8" />
+              <hr className="border-gray-100 my-6" />
             </section>
 
+            {/* 2. Age Restriction */}
             <section>
-              <SectionTitle id="interpretation-definitions">
-                Interpretation and Definitions
-              </SectionTitle>
-              <SubHeading>Interpretation</SubHeading>
-              <p className="mb-4">
-                The words whose initial letters are capitalized have meanings
-                defined under the following conditions. The following
-                definitions shall have the same meaning regardless of whether
-                they appear in singular or in plural.
-              </p>
-
-              <SubHeading>Definitions</SubHeading>
-              <p className="mb-4">For the purposes of this Privacy Policy:</p>
-              <ul className="list-none space-y-4 pl-2">
-                {[
-                  {
-                    term: 'Account',
-                    desc: 'means a unique account created for You to access our Service or parts of our Service.',
-                  },
-                  {
-                    term: 'Affiliate',
-                    desc: 'means an entity that controls, is controlled by, or is under common control with a party.',
-                  },
-                  {
-                    term: 'Application',
-                    desc: 'refers to PanenKita, the software program provided by the Company.',
-                  },
-                  { term: 'Company', desc: 'refers to PanenKita.' },
-                  { term: 'Country', desc: 'refers to: Indonesia' },
-                  {
-                    term: 'Device',
-                    desc: 'means any device that can access the Service.',
-                  },
-                  {
-                    term: 'Personal Data',
-                    desc: 'is any information that relates to an identified or identifiable individual.',
-                  },
-                  { term: 'Service', desc: 'refers to the Application.' },
-                  {
-                    term: 'Service Provider',
-                    desc: 'means any natural or legal person who processes the data on behalf of the Company.',
-                  },
-                  {
-                    term: 'Usage Data',
-                    desc: 'refers to data collected automatically.',
-                  },
-                  {
-                    term: 'You',
-                    desc: 'means the individual accessing or using the Service.',
-                  },
-                ].map((item, idx) => (
-                  <li key={idx} className="relative pl-6">
-                    <span className="absolute left-0 top-2 w-1.5 h-1.5 bg-light-green rounded-full"></span>
-                    <strong className="text-dark-green">{item.term}</strong>{' '}
-                    {item.desc}
-                  </li>
-                ))}
-              </ul>
-              <hr className="border-gray-100 my-8" />
+              <SectionTitle id="age">2. Age Restriction (18+)</SectionTitle>
+              <div className="bg-orange-50 border-l-4 border-orange-400 p-4 rounded-r-lg">
+                <p className="text-gray-800">
+                  Our Service is intended for users{' '}
+                  <strong>aged 18 and older</strong>. We do not knowingly
+                  collect personal information from children under the age of
+                  13. If you are a parent or guardian and believe your child has
+                  provided us with personal data, please contact us immediately
+                  so we can delete it.
+                </p>
+              </div>
+              <hr className="border-gray-100 my-6" />
             </section>
 
+            {/* 3. Information We Collect */}
             <section>
-              <SectionTitle id="data-collected">
-                Collecting and Using Your Personal Data
+              <SectionTitle id="collection">
+                3. Information We Collect
               </SectionTitle>
-              <SubHeading>Types of Data Collected</SubHeading>
-
-              <h4 className="font-bold text-gray-800 mt-4 mb-2">
-                Personal Data
-              </h4>
               <p className="mb-4">
-                While using Our Service, We may ask You to provide Us with
-                certain personally identifiable information that can be used to
-                contact or identify You. This may include:
-              </p>
-              <ul className="list-disc pl-6 space-y-1 mb-6 marker:text-light-green">
-                <li>Email address</li>
-                <li>First name and last name</li>
-                <li>Phone number</li>
-                <li>Address, State, Province, ZIP/Postal code, City</li>
-              </ul>
-
-              <h4 className="font-bold text-gray-800 mt-4 mb-2">Usage Data</h4>
-              <p className="mb-4">
-                Usage Data is collected automatically when using the Service and
-                may include IP address, browser type/version, pages visited,
-                time and date of visit, time spent on those pages, unique device
-                identifiers and other diagnostic data.
+                To provide the Service, we collect the following types of
+                information:
               </p>
 
-              <h4 className="font-bold text-gray-800 mt-4 mb-2">
-                Information Collected while Using the Application
-              </h4>
-              <p className="mb-4">
-                In order to provide features of Our Application, We may collect,
-                with Your prior permission:
-              </p>
-              <ul className="list-disc pl-6 space-y-1 mb-4 marker:text-light-green">
-                <li>
-                  Pictures and other information from your Device's camera and
-                  photo library
+              <SubHeading>
+                A. Information You Provide to Us (Manually)
+              </SubHeading>
+              <ul className="list-none space-y-3 pl-2 mb-6">
+                <li className="relative pl-6">
+                  <span className="absolute left-0 top-2 w-1.5 h-1.5 bg-light-green rounded-full"></span>
+                  <strong className="text-dark-green">Identity Data:</strong>{' '}
+                  Full name, Email address, and Phone number (for account
+                  creation).
+                </li>
+                <li className="relative pl-6">
+                  <span className="absolute left-0 top-2 w-1.5 h-1.5 bg-light-green rounded-full"></span>
+                  <strong className="text-dark-green">Address Data:</strong>{' '}
+                  Village name, city, or address details that you manually type
+                  into the application to describe your harvest location. We do
+                  not track your real-time GPS location.
+                </li>
+                <li className="relative pl-6">
+                  <span className="absolute left-0 top-2 w-1.5 h-1.5 bg-light-green rounded-full"></span>
+                  <strong className="text-dark-green">Harvest Content:</strong>{' '}
+                  Data about your crops, harvest dates, prices, and stock
+                  quantities.
                 </li>
               </ul>
-              <p className="text-sm text-gray-500 italic">
-                You can enable or disable access to this information at any
-                time, through Your Device settings.
+
+              <SubHeading>B. Information Collected Automatically</SubHeading>
+              <p className="mb-4">
+                <strong className="text-gray-800">Device & Analytics:</strong>{' '}
+                We use third-party services (Google Firebase) that may collect
+                your Device ID (Advertising ID), IP address, operating system
+                version, and app usage statistics. This helps us monitor app
+                stability and fix bugs.
               </p>
-              <hr className="border-gray-100 my-8" />
+
+              <SubHeading>C. Camera & Images</SubHeading>
+              <p className="mb-4">
+                We request access to your device's camera and photo gallery
+                solely to allow you to upload images of your harvest products.
+              </p>
+              <hr className="border-gray-100 my-6" />
             </section>
 
+            {/* 4. Use of Information */}
             <section>
-              <SectionTitle id="use-of-data">
-                Use of Your Personal Data
+              <SectionTitle id="usage">
+                4. How We Use Your Information
               </SectionTitle>
               <p className="mb-4">
-                The Company may use Personal Data for the following purposes:
+                We use your data for the following purposes:
               </p>
-              <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <ul className="grid grid-cols-1 md:grid-cols-1 gap-3">
                 {[
-                  'To provide and maintain our Service.',
-                  'To manage Your Account.',
-                  'For the performance of a contract.',
-                  'To contact You by email/SMS.',
-                  'To provide news & special offers.',
-                  'To manage Your requests.',
-                  'For business transfers.',
-                  'For data analysis & improvements.',
+                  'To register and manage your account.',
+                  'To display your harvest listings to other users within the app.',
+                  'To facilitate communication via third-party apps (see Section 5).',
+                  'To improve app performance via analytics.',
                 ].map((item, i) => (
                   <li
                     key={i}
@@ -261,199 +210,119 @@ export default function PrivacyPolicy() {
                   </li>
                 ))}
               </ul>
-              <hr className="border-gray-100 my-8" />
+              <hr className="border-gray-100 my-6" />
             </section>
 
+            {/* 5. Communication (WhatsApp) */}
             <section>
-              <SectionTitle id="sharing">When We Share Your Data</SectionTitle>
-              <p className="mb-4">
-                We may share Your personal information in the following
-                situations:
-              </p>
-              <div className="space-y-3">
-                {[
-                  {
-                    title: 'With Service Providers',
-                    text: 'to monitor and analyze the use of our Service, to contact You.',
-                  },
-                  {
-                    title: 'For business transfers',
-                    text: 'in connection with a merger, sale of assets, financing or acquisition.',
-                  },
-                  {
-                    title: 'With Affiliates',
-                    text: 'affiliates will be required to honor this Privacy Policy.',
-                  },
-                  {
-                    title: 'With business partners',
-                    text: 'to offer certain products, services or promotions.',
-                  },
-                  {
-                    title: 'With other users',
-                    text: 'when You share personal information in public areas.',
-                  },
-                  {
-                    title: 'With Your consent',
-                    text: 'for any other purpose with Your consent.',
-                  },
-                ].map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="bg-gray-50 p-4 rounded-lg border-l-4 border-light-green"
+              <SectionTitle id="whatsapp">
+                5. Communication via Third-Party Services
+              </SectionTitle>
+              <div className="bg-green-50 border border-green-200 rounded-xl p-6">
+                <div className="flex items-center gap-3 mb-3">
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="24"
+                    height="24"
+                    className="text-green-600 fill-current"
                   >
-                    <strong className="block text-gray-900 mb-1">
-                      {item.title}
-                    </strong>
-                    <span className="text-gray-600">{item.text}</span>
-                  </div>
-                ))}
-              </div>
-              <hr className="border-gray-100 my-8" />
-            </section>
-
-            {/* Combined simpler sections for brevity in code but kept all content */}
-            <section>
-              <SectionTitle id="retention">
-                Retention of Your Personal Data
-              </SectionTitle>
-              <p className="mb-4">
-                The Company will retain Your Personal Data only for as long as
-                is necessary for the purposes set out in this Privacy Policy.
-              </p>
-              <SectionTitle id="transfer">
-                Transfer of Your Personal Data
-              </SectionTitle>
-              <p className="mb-4">
-                Your information may be processed at the Company's operating
-                offices and in other places where the parties involved in
-                processing are located.
-              </p>
-              <SectionTitle id="delete">Delete Your Personal Data</SectionTitle>
-              <p className="mb-4">
-                You have the right to delete or request that We assist in
-                deleting the Personal Data we have collected about You.
-              </p>
-              <hr className="border-gray-100 my-8" />
-            </section>
-
-            <section>
-              <SectionTitle id="disclosure">
-                Disclosure of Your Personal Data
-              </SectionTitle>
-              <div className="grid md:grid-cols-3 gap-6">
-                <div>
-                  <h4 className="font-bold text-gray-800 mb-2">
-                    Business Transactions
+                    <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.592 2.654-.696c1.001.574 1.731.83 2.806.83 3.181 0 5.768-2.587 5.768-5.766.001-3.181-2.585-5.767-5.766-5.767zm0 10.5c-1.126 0-1.921-.301-2.924-.901l-.226-.128-1.579.414.422-1.539-.144-.229c-.588-.934-.897-1.634-.896-2.964.001-2.576 2.096-4.671 4.672-4.671 2.575 0 4.671 2.095 4.671 4.671-.001 2.576-2.097 4.672-4.673 4.672z" />
+                  </svg>
+                  <h4 className="font-bold text-green-800">
+                    WhatsApp Integration
                   </h4>
-                  <p className="text-sm">
-                    If the Company is involved in a merger, acquisition or asset
-                    sale, Your Personal Data may be transferred.
-                  </p>
                 </div>
-                <div>
-                  <h4 className="font-bold text-gray-800 mb-2">
-                    Law enforcement
-                  </h4>
-                  <p className="text-sm">
-                    The Company may be required to disclose Your Personal Data
-                    if required by law or valid requests.
-                  </p>
-                </div>
-                <div>
-                  <h4 className="font-bold text-gray-800 mb-2">
-                    Other legal requirements
-                  </h4>
-                  <p className="text-sm">
-                    To comply with legal obligations, protect rights, prevent
-                    wrongdoing, or protect safety.
-                  </p>
-                </div>
-              </div>
-              <hr className="border-gray-100 my-8" />
-            </section>
-
-            <section>
-              <SectionTitle id="security">
-                Security of Your Personal Data
-              </SectionTitle>
-              <p>
-                The security of Your Personal Data is important to Us. While We
-                strive to use commercially reasonable means to protect Your
-                Personal Data, no method of transmission or electronic storage
-                is 100% secure.
-              </p>
-              <SectionTitle id="children">Children's Privacy</SectionTitle>
-              <p>
-                Our Service does not address anyone under the age of 13. If We
-                learn we have collected such data without parental consent, We
-                will remove it.
-              </p>
-              <SectionTitle id="links">Links to Other Websites</SectionTitle>
-              <p>
-                Our Service may contain links to other websites not operated by
-                Us. We are not responsible for the content, privacy policies or
-                practices of any third party sites or services.
-              </p>
-              <SectionTitle id="changes">
-                Changes to this Privacy Policy
-              </SectionTitle>
-              <p>
-                We may update Our Privacy Policy from time to time. Changes are
-                effective when posted on this page.
-              </p>
-              <SectionTitle id="communication">
-                Communication via Third-Party Services
-              </SectionTitle>
-              <p>
-                Users may contact sellers or other users through third-party
-                applications (e.g., WhatsApp). PanenKita is not responsible for
-                messages, content, or interactions that occur outside of our
-                application.
-              </p>
-              <hr className="border-gray-100 my-8" />
-            </section>
-
-            <section>
-              <div className="bg-red-50 border border-red-100 rounded-xl p-6">
-                <SectionTitle id="child-safety">
-                  <span className="text-red-700">
-                    Child Safety Standards (Zero Tolerance)
-                  </span>
-                </SectionTitle>
-                <p className="mb-4">
-                  PanenKita is committed to providing a safe environment for all
-                  users. We have a{' '}
-                  <span className="font-bold text-red-600">
-                    strict zero-tolerance policy
-                  </span>{' '}
-                  against Child Sexual Abuse and Exploitation (CSAE).
+                <p className="mb-4 text-sm text-green-900">
+                  Our Service allows users to contact sellers or buyers to
+                  negotiate transactions. Please be aware that direct
+                  communication takes place outside of the PanenKita app,
+                  specifically through WhatsApp.
                 </p>
-                <ul className="list-disc pl-6 space-y-2 mb-4 marker:text-red-500">
+                <ul className="list-disc pl-5 space-y-2 text-sm text-green-900 marker:text-green-600">
                   <li>
-                    Users are prohibited from using our Service to create,
-                    upload, share, or distribute any content that depicts,
-                    promotes, or normalizes child sexual abuse or exploitation.
+                    When you click the "Contact" or "Chat" button, you will be
+                    redirected to WhatsApp.
                   </li>
                   <li>
-                    If we identify violations, we will take immediate action
-                    including removing content, reporting to NCMEC and law
-                    enforcement, and suspending or terminating accounts.
+                    PanenKita is not responsible for the privacy practices,
+                    message content, or interactions that occur on WhatsApp.
+                  </li>
+                  <li>
+                    We strictly advise you to review WhatsApp's Privacy Policy.
                   </li>
                 </ul>
-                <p className="text-sm font-medium bg-white p-3 rounded border border-red-100 inline-block">
-                  Report violations to:{' '}
-                  <a
-                    href="mailto:panenkita.official@gmail.com"
-                    className="text-red-600 underline"
-                  >
-                    panenkita.official@gmail.com
-                  </a>
-                </p>
               </div>
+              <hr className="border-gray-100 my-6" />
             </section>
 
-            <section className="mt-12 bg-cream p-8 rounded-xl text-center">
-              <SectionTitle id="contact">Contact Us</SectionTitle>
+            {/* 6. Retention & Deletion */}
+            <section>
+              <SectionTitle id="retention">
+                6. Data Retention and Deletion
+              </SectionTitle>
+              <p className="mb-4">
+                We retain your personal data only as long as necessary to
+                provide our Service.
+              </p>
+
+              <SubHeading>User Rights (Account Deletion)</SubHeading>
+              <p className="mb-4">
+                You have the right to request the deletion of your account and
+                all associated data at any time.
+              </p>
+
+              <div className="bg-gray-50 p-4 rounded-lg border-l-4 border-dark-green">
+                <strong className="block text-gray-900 mb-2">
+                  How to delete:
+                </strong>
+                <p className="text-gray-700">
+                  Please send a request to{' '}
+                  <a
+                    href="mailto:panenkita.official@gmail.com"
+                    className="text-teal-blue font-semibold hover:underline"
+                  >
+                    panenkita.official@gmail.com
+                  </a>{' '}
+                  with the subject
+                  <span className="font-mono bg-gray-200 px-1 py-0.5 rounded ml-1 text-sm text-black">
+                    "Delete Account"
+                  </span>
+                  . We will process your request and remove your data from our
+                  servers within a reasonable timeframe.
+                </p>
+              </div>
+              <hr className="border-gray-100 my-6" />
+            </section>
+
+            {/* 7. Security */}
+            <section>
+              <SectionTitle id="security">7. Security</SectionTitle>
+              <p className="leading-relaxed">
+                We value your trust in providing us your Personal Information
+                and strive to use commercially acceptable means to protect it.
+                However, no method of transmission over the internet or method
+                of electronic storage is 100% secure.
+              </p>
+              <hr className="border-gray-100 my-6" />
+            </section>
+
+            {/* 8. Changes */}
+            <section>
+              <SectionTitle id="changes">
+                8. Changes to This Privacy Policy
+              </SectionTitle>
+              <p className="leading-relaxed">
+                We may update our Privacy Policy from time to time. You are
+                advised to review this page periodically for any changes.
+                Changes are effective immediately after they are posted on this
+                page.
+              </p>
+              <hr className="border-gray-100 my-6" />
+            </section>
+
+            {/* 9. Contact */}
+            <section className="mt-8 bg-cream p-8 rounded-xl text-center">
+              <SectionTitle id="contact">9. Contact Us</SectionTitle>
               <p className="mb-4">
                 If you have any questions about this Privacy Policy, please
                 contact us:
@@ -485,7 +354,7 @@ export default function PrivacyPolicy() {
           <aside className="hidden lg:block w-80 shrink-0">
             <div className="sticky top-8 bg-white/80 backdrop-blur-md rounded-2xl shadow-sm border border-gray-100 p-6 max-h-[calc(100vh-4rem)] overflow-y-auto">
               <h4 className="font-bold text-dark-green mb-4 pb-2 border-b border-gray-100">
-                On this page
+                Table of Contents
               </h4>
               <nav>
                 <ul className="space-y-1">
