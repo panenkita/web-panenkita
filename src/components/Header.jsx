@@ -22,7 +22,7 @@ const Header = () => {
 
   const handleDownload = () => {
     window.open(
-      'https://drive.google.com/file/d/1-OHdDz51P6XVaRFFeHqhRvHr1lUaYBRq/view?usp=sharing',
+      'https://play.google.com/store/apps/details?id=com.panenkita.app&pcampaignid=web_share',
       '_blank'
     );
   };
