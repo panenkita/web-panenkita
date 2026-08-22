@@ -7,6 +7,7 @@ import {
   FaEnvelope,
   FaPhone,
   FaTiktok,
+  FaBookOpen,
 } from 'react-icons/fa';
 
 // Assets
@@ -45,6 +46,9 @@ const Footer = () => {
               </li>
               <li>
                 <FooterLink to="/produk">Produk</FooterLink>
+              </li>
+              <li>
+                <FooterLink to="/buku-panduan">Buku Panduan</FooterLink>
               </li>
               <li>
                 <FooterLink to="/privacy-policy">Privacy Policy</FooterLink>
@@ -90,21 +94,34 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Footer Bottom : Copyright & Social Media */}
+        {/* Footer Bottom : Copyright, Buku Panduan Button & Social Media */}
         <div className="border-t border-gray-200 mt-12 pt-8 flex flex-col sm:flex-row justify-between items-center gap-6">
           <p className="text-sm text-gray-500 text-center sm:text-left">
             © {new Date().getFullYear()} PanenKita. All Rights Reserved.
           </p>
-          <div className="flex space-x-4">
-            <SocialLink href="https://www.instagram.com/panenkita.official">
-              <FaInstagram size={20} />
-            </SocialLink>
-            <SocialLink href="#">
-              <FaFacebookF size={20} />
-            </SocialLink>
-            <SocialLink href="#">
-              <FaTiktok size={20} />
-            </SocialLink>
+
+          <div className="flex flex-wrap items-center justify-center sm:justify-end gap-4">
+            {/* Tombol Buku Panduan dekat Social Media */}
+            <Link
+              to="/buku-panduan"
+              className="inline-flex items-center gap-2 bg-emerald-50 hover:bg-emerald-600 text-dark-green hover:text-white px-4 py-2 rounded-full text-xs sm:text-sm font-semibold border border-emerald-200 hover:border-emerald-600 transition-all duration-300 shadow-sm hover:shadow-md"
+            >
+              <FaBookOpen size={14} className="text-emerald-600 group-hover:text-white" />
+              <span>Buku Panduan</span>
+            </Link>
+
+            {/* Social Media Buttons */}
+            <div className="flex space-x-3">
+              <SocialLink href="https://www.instagram.com/panenkita.official">
+                <FaInstagram size={18} />
+              </SocialLink>
+              <SocialLink href="#">
+                <FaFacebookF size={18} />
+              </SocialLink>
+              <SocialLink href="#">
+                <FaTiktok size={18} />
+              </SocialLink>
+            </div>
           </div>
         </div>
       </div>
@@ -126,7 +143,7 @@ const SocialLink = ({ href, children }) => (
     href={href}
     target="_blank"
     rel="noopener noreferrer"
-    className="text-dark-green bg-light-green/15 hover:bg-emerald-600 hover:text-white transition-all duration-300 w-10 h-10 flex items-center justify-center rounded-full"
+    className="text-dark-green bg-light-green/15 hover:bg-emerald-600 hover:text-white transition-all duration-300 w-9 h-9 flex items-center justify-center rounded-full"
   >
     {children}
   </a>

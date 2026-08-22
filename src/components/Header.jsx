@@ -64,7 +64,7 @@ const Header = () => {
           <div className="hidden md:block">
             <button
               onClick={handleDownload}
-              className="bg-emerald-600 hover:bg-teal-blue text-white px-6 py-2 rounded-lg font-semibold flex items-center gap-2 transition-all duration-200 transform hover:scale-105 shadow-md hover:shadow-lg"
+              className="bg-emerald-600 hover:bg-teal-blue text-white px-6 py-2 rounded-lg font-semibold flex items-center gap-2 transition-all duration-200 transform hover:scale-105 shadow-md hover:shadow-lg text-sm"
             >
               <FaGooglePlay />
               Download Aplikasi
