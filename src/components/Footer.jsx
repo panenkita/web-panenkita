@@ -48,9 +48,6 @@ const Footer = () => {
                 <FooterLink to="/produk">Produk</FooterLink>
               </li>
               <li>
-                <FooterLink to="/buku-panduan">Buku Panduan</FooterLink>
-              </li>
-              <li>
                 <FooterLink to="/privacy-policy">Privacy Policy</FooterLink>
               </li>
               <li>
